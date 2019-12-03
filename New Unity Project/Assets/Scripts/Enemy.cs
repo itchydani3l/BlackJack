@@ -60,6 +60,7 @@ public class Enemy : MonoBehaviour
         mode = amode;
         odir = adir;
         direction = Vector3.zero;
+        turnDirection(adir);
         if (timing.Length == 1) timing = new int[8] { 0, timing[0], 0, timing[0], 0, timing[0], 0, timing[0]};
         else if (timing.Length == 2) timing = new int[8] { 0, timing[0], 0, timing[1], 0, timing[0], 0, timing[1] };
         else if (timing.Length == 3) timing = new int[8] { timing[2], timing[0], timing[2], timing[1], timing[2], timing[0], timing[2], timing[1] };
@@ -101,15 +102,21 @@ public class Enemy : MonoBehaviour
         else
         {
             //Play our idle animation
-            if (adir == 0 || adir==2)
+            if (adir == 0)
             {
                 current = side;
+                spriteRenderer.flipX = false;
             }
-            if (adir == 1)
+            else if (adir == 1)
             {
                 current = north;
             }
-            if (adir == 3)
+            else if (adir == 2)
+            {
+                current = side;
+                spriteRenderer.flipX = true;
+            }
+            else if (adir == 3)
             {
                 current = south;
             }
@@ -132,13 +139,13 @@ public class Enemy : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (swing) doSwing();
-        //else if (targetDetected) tryDetect(targetColl.transform.position); // If we're in combat right now, then continue to engage
+        if (mode == 5) mode5(); // Being unconscious trumps every other action
+        else if (swing) doSwing();
+        else if (targetDetected) tryDetect(targetColl.transform.position); // If we're in combat right now, then continue to engage
         else if (mode == 1) mode1();
         else if (mode == 2) mode2();
         else if (mode == 3) mode3();
         else if (mode == 4) mode4();
-        else if (mode == 5) mode5();
     }
     void turnDirection(int dir) // this turns our wizard, and it also turns our detection cone
     {
@@ -277,7 +284,7 @@ public class Enemy : MonoBehaviour
                 rb2d.velocity = Vector2.zero;
             }
         }
-        else targetDetected = false;
+        else targetDetected = false; // If we look for the target, but we can't find him, then we resume our normal pattern
     }
     public void detectPlayer(Collider2D other)
     {
@@ -288,6 +295,7 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.tag == "Hurt" && mode!=5) // this is how we get hurt. Ouch!
         {
+            swing = false; // We will stop swinging if we become hurt
             mode = 5;
             wspind = 0;
             box2.enabled = false; // When we are unconscious, we don't block movement

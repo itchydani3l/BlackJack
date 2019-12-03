@@ -1,2 +1,0 @@
-# BlackJack
-BlackJack Semester Project

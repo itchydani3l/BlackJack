@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Title.unity
+    guid: 1fab0e0a4b4b181419536d4921a69c4f
+  - enabled: 1
+    path: Assets/Scenes/PixelPerfect.unity
+    guid: 8ea85aee8fabfe746aa1147b71793ff2
+  - enabled: 1
+    path: Assets/Scenes/Choice.unity
+    guid: e5956418627865046b44abf955291b64
   m_configObjects: {}

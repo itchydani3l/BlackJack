@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     private bool key;
     public Image uikey;
 
-    public string nextLevel;
+    //public string nextLevel; // This has been moved to stage controller
 
     public Sprite isp;
     public Sprite wsp1;
@@ -35,15 +35,23 @@ public class Player : MonoBehaviour
 
     private bool swing;
 
+    public GameObject pauseCanvas;
+    private bool paused;
+
     // Start is called before the first frame update
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
-
+    void pauseGame()
+    {
+        if (!paused) { paused = true; Time.timeScale = 0; pauseCanvas.SetActive(true); }
+        else { paused = false; Time.timeScale = 1; pauseCanvas.SetActive(false); }
+    }
     void playerInputs()
     {
+        if (Input.GetButtonDown("Cancel")) pauseGame();
         if (Input.GetButtonDown("Jump") && !swing) { swing = true; hurtbox.SetActive(true); wspind = 0; }
     }
     void playerMovement() // I break it down in this method to prevent the update methods from getting cluttered
@@ -108,12 +116,12 @@ public class Player : MonoBehaviour
         if (other.gameObject.tag == "Item")
         {
             other.gameObject.SetActive(false);
-            count = count + 1;
+            count = count + 100;
             CountText();
         }
         if (other.gameObject.tag == "Hurt") // If we get hurt, we die!
         {
-            gameObject.SetActive(false);
+            lose();
         }
         if (other.gameObject.tag == "Key" && !key)
         {
@@ -134,9 +142,16 @@ public class Player : MonoBehaviour
         }
         if (other.gameObject.tag == "Door")
         {
-            if (true) { SceneManager.LoadScene(nextLevel); } // Change this condition to include a level key?
-            winText.gameObject.SetActive(true);
+            //if (true) { SceneManager.LoadScene(nextLevel); } // This has been moved to stage controller
         }
+    }
+    void lose()
+    {
+        winText.text = "YOU DIED!";
+        winText.gameObject.SetActive(true);
+        pauseGame();
+        Time.timeScale = .5f;
+        gameObject.SetActive(false);
     }
     void OnTriggerExit2D(Collider2D other)
     {

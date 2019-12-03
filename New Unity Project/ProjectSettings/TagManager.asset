@@ -8,6 +8,8 @@ TagManager:
   - Hurt
   - Detect
   - Enemy
+  - Door
+  - Goal
   layers:
   - Default
   - TransparentFX
